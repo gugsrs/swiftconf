@@ -13,41 +13,60 @@ extension String {
     }
 }
 
-struct swiftconf {
-    public func EnvfileConfiguration() -> [String:Any] {
-        var confs: [String:Any] = [:]
+public struct swiftconf {
+    var confs: [String:Any] = [:]
+
+    init() {
+        self.EnvfileConfiguration()
+    }
+
+    init(withPath path: String) {
+        self.EnvfileConfiguration()
+    }
+
+    public mutating func EnvfileConfiguration() {
         guard let path = self.getEnvFilePath() else {
-            return confs
+            return
         }
         do {
             let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.ascii.rawValue)
             let lines = contents.components(separatedBy: .newlines)
-            for line in lines {
-                if line.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).isEmpty {
+            for currentLine in lines {
+                let line = currentLine.trimmingCharacters(in: .whitespacesAndNewlines)
+                if line.isEmpty {
                     continue
                 }
                 do {
                     let res = try self.parseLine(line)
-                    confs[res.key] = res.value
+                    self.confs[res.key] = res.value
                 } catch Errors.commentLine {
                     continue    
                 }
             }
-            return confs
         } catch {
             print("Error catched \(error)")
         }
-        return confs
     }
 
     private func parseLine(_ line: String) throws -> (key: String, value: Any) {
         if line[line.startIndex] == "#" {
             throw Errors.commentLine
         }
-        let key_value = line.components(separatedBy: "=")
-        // PARSE KEY
-        // PARSE VALUE
-        return (key_value[0], key_value[1])
+        let splittedLine = line.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+        let key = splittedLine[0]
+        var value = String(splittedLine[1])
+        if value.isEmpty {
+            return (String(key), value)
+        }
+        value = self.valueParser(value)
+        value = value.replacingOccurrences(of: "\'", with: "")
+        if value.first! == "\"" {
+            value = String(value.dropFirst())
+        }
+        if value.last! == "\"" {
+            value = String(value.dropLast())
+        }
+        return(String(key), value)
     }
 
     private func getEnvFilePath() -> String? {
@@ -66,6 +85,28 @@ struct swiftconf {
         }
         return nil
     }
+
+    func valueParser(_ value: String) -> String {
+        var is_quoted = false
+        var new = ""
+        for c in value {
+            if c == "#" && is_quoted == false {
+                break
+            }
+            if c == "\"" && is_quoted == false{
+                is_quoted=true
+            } else if c == "\"" && is_quoted == true {
+                is_quoted = false
+            }
+            new.append(c)
+        }
+        new = new.trimmingCharacters(in: .whitespacesAndNewlines)
+        return new
+    }
+
+    func get(_ name: String) -> Any? {
+        return self.confs[name]
+    }
 }
 
-let confs = swiftconf().EnvfileConfiguration()
+let config = swiftconf().get
