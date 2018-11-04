@@ -48,7 +48,7 @@ public struct swiftconf {
         }
     }
 
-    private func parseLine(_ line: String) throws -> (key: String, value: Any) {
+    func parseLine(_ line: String) throws -> (key: String, value: Any) {
         if line[line.startIndex] == "#" {
             throw Errors.commentLine
         }
@@ -69,7 +69,7 @@ public struct swiftconf {
         return(String(key), value)
     }
 
-    private func getEnvFilePath() -> String? {
+    func getEnvFilePath() -> String? {
         let filePath = "/.env"
         let root = "/"
         let fileManager = FileManager.default
