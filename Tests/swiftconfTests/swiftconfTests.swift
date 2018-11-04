@@ -3,9 +3,6 @@ import XCTest
 
 final class swiftconfTests: XCTestCase {
     func testParseLine() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
 		do {
 			let parsedLine = try swiftconf().parseLine("TEST=123")
 			XCTAssertEqual(parsedLine.key, "TEST")
@@ -15,6 +12,12 @@ final class swiftconfTests: XCTestCase {
 			return
 		} catch {
 		}
+    }
+
+    func testParseLineWithComment() {
+		XCTAssertThrowsError(try swiftconf().parseLine("#TEST=123")) { error in
+            XCTAssertEqual(error as! Errors, Errors.commentLine)
+        }
     }
 
     static var allTests = [
