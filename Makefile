@@ -5,5 +5,5 @@ test:
 	swift test
 
 release:
-	git tag `swift tag_version.swift`
-	git push origin `swift tag_version.swift`
+	git tag `swift Scripts/tag_version.swift`
+	git push origin `swift Scripts/tag_version.swift`
