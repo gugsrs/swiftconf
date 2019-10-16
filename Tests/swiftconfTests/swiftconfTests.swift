@@ -22,6 +22,6 @@ final class swiftconfTests: XCTestCase {
 
     static var allTests = [
         ("testParseLine", testParseLine),
-        ("testParseLineWithComment", testParseLineWithComment),
+        ("testParseLineWithComment", testParseLineWithComment)
     ]
 }
