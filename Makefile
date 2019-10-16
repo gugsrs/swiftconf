@@ -1,5 +1,11 @@
+clean:
+	@rm -rf .build/
+
 build:
 	swift build
+
+format:
+	swiftlint autocorrect
 
 test:
 	swift test

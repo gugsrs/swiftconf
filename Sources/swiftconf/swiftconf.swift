@@ -14,7 +14,7 @@ extension String {
 }
 
 public struct swiftconf {
-    var confs: [String:Any] = [:]
+    var confs: [String: Any] = [:]
 
     init() {
         self.EnvfileConfiguration()
@@ -40,7 +40,7 @@ public struct swiftconf {
                     let res = try self.parseLine(line)
                     self.confs[res.key] = res.value
                 } catch Errors.commentLine {
-                    continue    
+                    continue
                 }
             }
         } catch {
@@ -93,7 +93,7 @@ public struct swiftconf {
             if c == "#" && is_quoted == false {
                 break
             }
-            if c == "\"" && is_quoted == false{
+            if c == "\"" && is_quoted == false {
                 is_quoted=true
             } else if c == "\"" && is_quoted == true {
                 is_quoted = false
